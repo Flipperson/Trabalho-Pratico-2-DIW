@@ -1,0 +1,19 @@
+{
+  "usuarios": [
+    {
+      "id": "1",
+      "login": "admin",
+      "senha": "123",
+      "nome": "Administrador",
+      "email": "admin@email.com",
+      "admin": true
+    },
+    {
+      "id": "2",
+      "login": "usuario1",
+      "senha": "123",
+      "nome": "Usuário Comum",
+      "email": "usuario@email.com",
+      "admin": false
+    }
+  ],
