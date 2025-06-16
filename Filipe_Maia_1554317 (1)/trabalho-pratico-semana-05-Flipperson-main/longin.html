@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Receitas Culinárias</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Mantendo o mesmo estilo da sua aplicação */
+    .top-bar {
+      background-color: #FA8072; /* Cor salmão */
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    
+    .login-container {
+      max-width: 500px;
+      margin: 30px auto;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    
+    .btn-login {
+      background-color: #FA8072;
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 10px;
+    }
+    
+    .btn-login:hover {
+      background-color: #e57366;
+    }
+    
+    .link-cadastro {
+      color: #FA8072;
+      text-decoration: none;
+    }
+    
+    .link-cadastro:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <!-- Faixa no topo consistente com o resto do site -->
+  <div class="top-bar">Bem-vindo ao site de Receitas Culinárias!</div>
+
+  <!-- Container principal do login -->
+  <div class="container">
+    <div class="login-container">
+      <h2 class="text-center mb-4">Login</h2>
+      <form id="loginForm">
+        <div class="mb-3">
+          <label for="username" class="form-label">Usuário</label>
+          <input type="text" class="form-control" id="username" required>
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Senha</label>
+          <input type="password" class="form-control" id="password" required>
+        </div>
+        <button type="submit" class="btn btn-login mb-3">Entrar</button>
+        <div class="text-center">
+          <a href="#" class="link-cadastro" id="registerLink">Não tem conta? Cadastre-se</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const loginForm = document.getElementById('loginForm');
+      const registerLink = document.getElementById('registerLink');
+      
+      // Função de login
+      loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        
+        // Verificar credenciais no JSON Server
+        fetch(`http://localhost:3000/usuarios?login=${username}`)
+          .then(response => response.json())
+          .then(users => {
+            if (users.length === 0) {
+              alert('Usuário não encontrado!');
+            } else {
+              const user = users[0];
+              if (user.senha === password) {
+                // Salva o usuário na sessionStorage
+                sessionStorage.setItem('usuarioLogado', JSON.stringify(user));
+                // Redireciona para a página principal
+                window.location.href = 'index.html';
+              } else {
+                alert('Senha incorreta!');
+              }
+            }
+          })
+          .catch(error => {
+            console.error('Erro ao fazer login:', error);
+            alert('Erro ao conectar com o servidor');
+          });
+      });
+      
+      // Função de cadastro (simplificada)
+      registerLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        const newUser = {
+          login: prompt('Digite um nome de usuário:'),
+          senha: prompt('Digite uma senha:'),
+          nome: prompt('Digite seu nome completo:'),
+          email: prompt('Digite seu e-mail:'),
+          admin: false
+        };
+        
+        fetch('http://localhost:3000/usuarios', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(newUser)
+        })
+        .then(response => response.json())
+        .then(data => {
+          alert('Cadastro realizado com sucesso! Faça login.');
+        })
+        .catch(error => {
+          console.error('Erro ao cadastrar:', error);
+          alert('Erro ao cadastrar usuário');
+        });
+      });
+    });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
